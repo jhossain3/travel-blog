@@ -1,8 +1,8 @@
-import { ThemeContext } from '@emotion/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Home from './homePage';
 import reportWebVitals from './reportWebVitals';
+import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 
@@ -10,6 +10,11 @@ import theme from './theme';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <ThemeProvider theme={theme}>
+    <GlobalStyles
+      styles={{
+        body: { backgroundColor: "#E6EFD1" },
+          }}
+          />
   <React.StrictMode>
     <Home />
   </React.StrictMode>
