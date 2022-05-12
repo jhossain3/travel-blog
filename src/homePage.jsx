@@ -14,7 +14,7 @@ const backgroundImage2 =
 const backgroundImage3 =
   "https://images.unsplash.com/photo-1522770179533-24471fcdba45";
 
-export default function About() {
+export default function Home() {
   return (
     <>
       <Container
@@ -68,7 +68,7 @@ export default function About() {
         Highlights
       </Typography>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{mb:'10px'}}>
         <Grid container justifyContent="center" spacing={9}>
           <Grid key={0} item>
             <Paper
