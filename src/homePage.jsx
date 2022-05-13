@@ -47,7 +47,7 @@ export default function Home() {
               paddingTop: "15px",
             }}
           >
-            Welcome to our Travel Blog
+            Welcome to our Travel Page
           </Typography>
           <Typography variant="subtitle1" color="#FFFFFF">
             Lets explore our past travels
