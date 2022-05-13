@@ -7,11 +7,11 @@ const theme = createTheme({
     fontFamily: 'Open Sans',
   },
   backgroundColor: { 
-    default: '#FF0000' 
+    default: '#E6EFD1' 
   },
   palette: {
     primary: {
-      main: '#556cd6',
+      main: '#E6EFD1',
     },
     secondary: {
       main: '#19857b',

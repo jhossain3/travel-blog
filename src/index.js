@@ -6,31 +6,21 @@ import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Footer from './footer';
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('app'));
 root.render(
   <ThemeProvider theme={theme}>
-      <Box sx={{
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  }}
-  >
     <GlobalStyles
       styles={{
         body: { backgroundColor: "#E6EFD1" },
           }}
           />
   <React.StrictMode>
-  <Container component="main" disableGutters maxWidth={false}>
-    <Home />
+    <Home/>
     <Footer/>
-    </Container>
   </React.StrictMode>
-  </Box>
+
   </ThemeProvider>
 );
 
