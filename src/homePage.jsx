@@ -52,8 +52,8 @@ export default function Home() {
           <Typography variant="subtitle1" color="#FFFFFF">
             Lets explore our past travels
           </Typography>
-          <Button variant="contained" href="https://www.google.com/">
-            Discover places
+          <Button variant="contained">
+          Discover places
           </Button>
         </Container>
       </Container>
