@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Home from './homePage';
+
+import Home from './components/homePage';
 import reportWebVitals from './reportWebVitals';
 import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
-import Footer from './footer';
+import Footer from './components/footer';
 
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
