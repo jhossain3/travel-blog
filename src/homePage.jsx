@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import { Grid } from "@mui/material";
+import { Link } from 'react-router-dom';
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1542052125323-e69ad37a47c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80";
@@ -16,6 +17,7 @@ const backgroundImage3 =
 
 export default function Home() {
   return (
+    
     <>
       <Container
         maxWidth={false}
@@ -52,7 +54,7 @@ export default function Home() {
           <Typography variant="subtitle1" color="#FFFFFF">
             Lets explore our past travels
           </Typography>
-          <Button variant="contained">
+          <Button variant="contained" component={Link} to="/discover">
           Discover places
           </Button>
         </Container>
