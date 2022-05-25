@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import Home from './components/homePage';
+import Navbar from './components/navbar'
 import reportWebVitals from './reportWebVitals';
 import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
@@ -18,6 +19,7 @@ root.render(
           }}
           />
   <React.StrictMode>
+    <Navbar/>
     <Home/>
     <Footer/>
   </React.StrictMode>
