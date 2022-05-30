@@ -6,7 +6,9 @@ import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Footer from './footer';
-
+import Discover from './discoverPlaces';
+import Japan from './japan'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
 root.render(
@@ -17,7 +19,19 @@ root.render(
           }}
           />
   <React.StrictMode>
-    <Home/>
+  <BrowserRouter>
+      <Routes>
+        <Route path="/"  element={<Home />}>
+        
+        </Route>
+        <Route path="/discover" element={<Discover />}>
+
+        </Route>
+        <Route path="/japan" element={<Japan />}>
+
+</Route>
+      </Routes>
+    </BrowserRouter>
     <Footer/>
   </React.StrictMode>
 
