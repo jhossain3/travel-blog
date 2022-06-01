@@ -1,26 +1,92 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import { styled } from "@mui/material/styles";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
+import {
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import ImageUploadCard from "./ImageUpload";
 
 export default function Create() {
+  const [author, setAuthor] = React.useState("");
+
+  const handleChange = (event) => {
+    setAuthor(event.target.value);
+  };
   return (
-    <Grid container spacing={2} sx={{ pt: "50px" }} justifyContent="center">
-      <Grid item xs={10} >
+    <Grid
+      container
+      sx={{ pt: "50px" }}
+      justifyContent="center"
+      alignItems="center"
+      direction="column"
+    >
+      <Grid item xs={10}>
         <Box
+          component="form"
+          noValidate
+          autoComplete="off"
           sx={{
-            width: 1000,
-            maxWidth: "100%",
+            width: 650,
+            height: 600,
+            borderRadius: 1,
+            background: "#ffffff",
           }}
         >
-          <TextField
-            sx={{ background: "#FFFFFF", p:'0'}}
-            fullWidth
-            label="fullWidth"
-            id="fullWidth"
-          />
+          <Grid
+            container
+            sx={{ pt: "50px" }}
+            justifyContent="center"
+            alignItems="center"
+            direction="column"
+          >
+            <TextField
+              sx={{
+                pb: "30px",
+              }}
+              id="names"
+              label="Names"
+            />
+            <TextField
+              sx={{
+                pb: "30px",
+              }}
+              id="destination"
+              label="Destination"
+            />
+            <TextField
+              sx={{
+                pb: "30px",
+              }}
+              id="dates"
+              label="Dates"
+            />
+            <ImageUploadCard sx={{ pb: "25px" }} />
+            <Typography> Pictures </Typography>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Author</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={author}
+                  label="Author"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={"Sadiyah"}>Sadiyah</MenuItem>
+                  <MenuItem value={"Jannah"}>Jannah</MenuItem>
+                  <MenuItem value={"Yasmin"}>Yasmin</MenuItem>
+                  <MenuItem value={"Jessica"}>Jessica</MenuItem>
+                  <MenuItem value={"Adina"}>Adina</MenuItem>
+                  <MenuItem value={"Aysha"}>Aysha</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
         </Box>
       </Grid>
     </Grid>
