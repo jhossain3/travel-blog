@@ -14,6 +14,13 @@ import ImageUploadCard from "./ImageUpload";
 export default function Create() {
   const [author, setAuthor] = React.useState("");
 
+// const getAuthors = ()=>{
+//   axios.get("localhost:3003/getAuthors")
+//   .then((res)=>{
+//     console.log(res);
+//   })
+// }
+
   const handleChange = (event) => {
     setAuthor(event.target.value);
   };
@@ -48,15 +55,15 @@ export default function Create() {
               sx={{
                 pb: "30px",
               }}
-              id="names"
-              label="Names"
+              id="destination"
+              label="Destination"
             />
             <TextField
               sx={{
                 pb: "30px",
               }}
-              id="destination"
-              label="Destination"
+              id="names"
+              label="Names"
             />
             <TextField
               sx={{
@@ -65,8 +72,8 @@ export default function Create() {
               id="dates"
               label="Dates"
             />
-            <ImageUploadCard sx={{ pb: "25px" }} />
-            <Typography> Pictures </Typography>
+            <ImageUploadCard />
+            <Typography sx={{ pb: "25px" }}> Pictures </Typography>
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Author</InputLabel>
