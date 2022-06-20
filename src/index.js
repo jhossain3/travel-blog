@@ -12,6 +12,7 @@ import Create from "./create";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("app"));
+
 root.render(
   <ThemeProvider theme={theme}>
     <GlobalStyles
