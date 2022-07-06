@@ -14,36 +14,39 @@ import {
 } from "@mui/material";
 import ImageUploadCard from "./ImageUpload";
 
-const names = [];
-
-async function getAuthors() {
-
-  const res = await fetch("http://localhost:3003/getAuthors");
-  const resData = await res.json();
-  console.log(resData);
-  for (let i = 0; i < resData.length; i++) {
-    names[i] = resData[i].name;
-  }
-  console.log(names);
-
-  return names;
-}
-
-getAuthors();
-
 export default function Create() {
-
   const [personName, setPersonName] = React.useState([]);
 
+  const [names, setNames]= React.useState([]);
+
+  async function getAuthors() {
+    try{
+      const res = await fetch("http://localhost:3003/getAuthors");
+      const resData = await res.json();
+  
+      console.log(resData)
+      console.log(names)
+      setNames(resData.map(e=> e.name))
+  
+    }
+    catch(e){
+      console.log(e)
+    }
+    return names;
+  }
+
+
+    getAuthors().then(function(data) {
+      console.log(data) // {body: [object Object]}
+      });
+
+  
+
   const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
+    setPersonName(event.target.value);
   };
+
+  const people = ["izzy", "jannah", "yasmin"];
 
   return (
     <Grid
@@ -96,29 +99,27 @@ export default function Create() {
             <ImageUploadCard />
             <Typography sx={{ pb: "25px" }}> Pictures </Typography>
             <Box sx={{ minWidth: 120 }}>
-            <div>
-      <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-multiple-name-label">Name</InputLabel>
-        <Select
-          labelId="demo-multiple-name-label"
-          id="demo-multiple-name"
-          multiple
-          value={personName}
-          onChange={handleChange}
-          input={<OutlinedInput label="Name" />}
+              <div>
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <InputLabel id="name-label">Name</InputLabel>
 
-        >
-          {names.map((name) => (
-            <MenuItem
-              key={name}
-              value={name}
-            >
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+                  <Select
+                    labelId="name-label"
+                    id="name"
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Name" />}
+                  >
+
+                    {/* {people?.map((i) => (
+                      <MenuItem>{i}</MenuItem>
+                    ))} */}
+                    {names?.map((i) => (
+                      <MenuItem key={i} value={i}>{i}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
             </Box>
             <Button>Hello</Button>
           </Grid>
