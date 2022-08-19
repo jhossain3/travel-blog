@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useState, useEffect, useCallback } from "react";
+
 import {
   Box,
   Button,
@@ -6,7 +8,6 @@ import {
   TextField,
   Typography,
   FormControl,
-  MenuList,
   MenuItem,
   InputLabel,
   OutlinedInput,
@@ -14,39 +15,29 @@ import {
 } from "@mui/material";
 import ImageUploadCard from "./ImageUpload";
 
+
 export default function Create() {
   const [personName, setPersonName] = React.useState([]);
 
-  const [names, setNames]= React.useState([]);
+  const [names, setNames] = React.useState([]);
 
-  async function getAuthors() {
-    try{
-      const res = await fetch("http://localhost:3003/getAuthors");
-      const resData = await res.json();
-  
-      console.log(resData)
-      console.log(names)
-      setNames(resData.map(e=> e.name))
-  
-    }
-    catch(e){
-      console.log(e)
-    }
-    return names;
-  }
+  useEffect(() => {
+    const getAuthors = async () => {
+      let res = await fetch("http://localhost:3003/getAuthors");
 
+      let resData = await res.json();
+      setNames(resData.map((e) => e.name));
+      console.log(resData);
+      console.log(names);
+    };
 
-    getAuthors().then(function(data) {
-      console.log(data) // {body: [object Object]}
-      });
-
-  
+    getAuthors().catch(console.error);
+  }, [names]);
 
   const handleChange = (event) => {
     setPersonName(event.target.value);
   };
-
-  const people = ["izzy", "jannah", "yasmin"];
+  console.log('hello')
 
   return (
     <Grid
@@ -110,12 +101,10 @@ export default function Create() {
                     onChange={handleChange}
                     input={<OutlinedInput label="Name" />}
                   >
-
-                    {/* {people?.map((i) => (
-                      <MenuItem>{i}</MenuItem>
-                    ))} */}
                     {names?.map((i) => (
-                      <MenuItem key={i} value={i}>{i}</MenuItem>
+                      <MenuItem value={i} key={i}>
+                        {i}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
