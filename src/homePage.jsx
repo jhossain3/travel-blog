@@ -1,9 +1,5 @@
 import * as React from "react";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-import { Grid } from "@mui/material";
+import { Button, Grid, Paper, Typography, Container } from "@mui/material";
 import { Link } from 'react-router-dom';
 
 const backgroundImage =
