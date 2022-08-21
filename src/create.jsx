@@ -27,17 +27,43 @@ export default function Create() {
 
       let resData = await res.json();
       setNames(resData.map((e) => e.name));
-      console.log(resData);
-      console.log(names);
     };
 
     getAuthors().catch(console.error);
-  }, [names]);
+  }, []);
 
   const handleChange = (event) => {
     setPersonName(event.target.value);
   };
-  console.log('hello')
+
+  // function handleClick() {
+    
+  //   // Send data to the backend via POST
+  //   fetch('http://localhost:3003/posts', {  // Enter your IP address here
+
+  //     method: 'POST', 
+  //     mode: 'cors', 
+  //     body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
+
+  //   })
+    
+  // }
+
+  var jsonData = {
+    "users": [
+        {
+            "name": "alan", 
+            "age": 23,
+            "username": "aturing"
+        },
+        {
+            "name": "john", 
+            "age": 29,
+            "username": "__john__"
+        }
+    ]
+  };
+
 
   return (
     <Grid
@@ -110,7 +136,7 @@ export default function Create() {
                 </FormControl>
               </div>
             </Box>
-            <Button>Hello</Button>
+            <Button>Submit</Button>
           </Grid>
         </Box>
       </Grid>
