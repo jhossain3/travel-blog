@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button, Grid, Paper, Typography, Container } from "@mui/material";
 import { Link } from 'react-router-dom';
 
+
 const backgroundImage =
   "https://images.unsplash.com/photo-1542052125323-e69ad37a47c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80";
 const backgroundImage1 =
@@ -50,7 +51,7 @@ export default function Home() {
           <Typography variant="subtitle1" color="#FFFFFF">
             Lets explore our past travels
           </Typography>
-          <Button variant="contained" component={Link} to="/discover">
+          <Button variant="contained" component={Link} to={'/discover'}>
           Discover places
           </Button>
         </Container>
