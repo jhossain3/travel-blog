@@ -25,30 +25,8 @@ import {
 
 export default function Create() {
 
-
-
-
-  
-// const accessToken = "ih9zbd5twk6to31"
-
-// const dbx = new Dropbox({  
-//   accessToken,  
-//   fetch  
-// });
-
-// const getFiles = async () => {  
-// const response = await dbx.filesListFolder({  
-//   path: '',   
-//   limit: 5  
-// })
-
-// console.log(response)  
-// }
-
-// getFiles()
-
 const [authorObj, setAuthorObj] = useState([]);
-// const [url, setUrl] = useState([]);
+console.log('authorObj', authorObj);
 const [field, setField] = useState({
     destination: "",
     groupSize: "",
@@ -59,6 +37,8 @@ const [field, setField] = useState({
     summary: "",
     author: "",
   });
+
+  console.log('field', field.author);
 
   useEffect(() => {
     const getAuthors = async () => {
@@ -101,7 +81,6 @@ const [field, setField] = useState({
   const handleSubmit = async (event) => {
     await fetch("http://localhost:3003/posts",{
       method: "POST",
-      mode: 'no-cors',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -114,8 +93,6 @@ const [field, setField] = useState({
         flightHours: field.flightHours,
         checkIn: field.checkIn,
         checkOut: field.checkOut,
-        // pictures: field.pictures,
-    
 
       }),
     })
