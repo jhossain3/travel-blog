@@ -25,41 +25,41 @@ app.use((req, res, next) => {
   next();
 });
 
-const dbx = new Dropbox({
-  accessToken : 'sl.BQPf2XtpMYmY3MsBqGpSdjQzy-N4UyfpWqUCcXNWYwRCG3-erTe75B_J0qZ_L4zRPSRXBOxIZnxHxlU-iyX_gL9wPBHISCFFAfw_ZAQrgYWczDP2Y0hnfqUg9DYYMuqYVrDHb9U',
-  fetch: fetch
-})
+// const dbx = new Dropbox({
+//   accessToken : 'sl.BQPf2XtpMYmY3MsBqGpSdjQzy-N4UyfpWqUCcXNWYwRCG3-erTe75B_J0qZ_L4zRPSRXBOxIZnxHxlU-iyX_gL9wPBHISCFFAfw_ZAQrgYWczDP2Y0hnfqUg9DYYMuqYVrDHb9U',
+//   fetch: fetch
+// })
 
-app.post("/dbx", (req, res) => {
+// app.post("/dbx", (req, res) => {
 
-  console.log('sadiyah smeellssss');
-  let imageArray;
+//   console.log('sadiyah smeellssss');
+//   let imageArray;
 
-//I receive either a single image or an array of images from the front end and
-//its placed in req.files by express-fileupload
+// //I receive either a single image or an array of images from the front end and
+// //its placed in req.files by express-fileupload
 
-  if (req.files.itemImage.length) {
-    imageArray = [...req.files.itemImage];
-  } else {
-    imageArray = [req.files.itemImage];
-  }
+//   if (req.files.itemImage.length) {
+//     imageArray = [...req.files.itemImage];
+//   } else {
+//     imageArray = [req.files.itemImage];
+//   }
 
-  imageArray.forEach(image => {
-  console.log("Image==>>",image)
+//   imageArray.forEach(image => {
+//   console.log("Image==>>",image)
 
-  dbx
-  .filesUpload({
-    path: `/${image.name}`,
-    contents: image.data
-  })
-  .then(response => {
-    console.log(response);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-});
-});
+//   dbx
+//   .filesUpload({
+//     path: `/${image.name}`,
+//     contents: image.data
+//   })
+//   .then(response => {
+//     console.log(response);
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
+// });
+// });
 
 const getPosts = async (req, res) => {
   try {
@@ -167,10 +167,8 @@ app.get("/getAuthors", async function (req, res) {
 
 app.post("/posts", async function (req, res) {
   try{  
-    console.log('this is reqbody', req.body);
-    const authorId = ObjectId(req.body.author);
+    const authorId = new ObjectId(req.body.author);
     const author = await db.getDb().collection("authors").findOne({ _id: authorId });
-  
     const newPost = {
       destination: req.body.destination,
       groupSize: req.body.groupSize,
