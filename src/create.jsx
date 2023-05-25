@@ -22,23 +22,23 @@ import {
 // import DropboxChooser from 'react-dropbox-chooser';
 // import { Dropbox } from 'dropbox';
 
-
 export default function Create() {
+  const [authorObj, setAuthorObj] = useState([]);
 
-const [authorObj, setAuthorObj] = useState([]);
-console.log('authorObj', authorObj);
-const [field, setField] = useState({
+  console.log("authorObj", authorObj);
+  const [field, setField] = useState({
     destination: "",
     groupSize: "",
     flightHours: "",
     checkIn: "",
     checkOut: "",
-    pictures: "",
     summary: "",
     author: "",
   });
+  const [file, setFile] = useState();
+  console.log('file', file);
 
-  console.log('field', field.author);
+  console.log("field", field);
 
   useEffect(() => {
     const getAuthors = async () => {
@@ -46,20 +46,37 @@ const [field, setField] = useState({
       const authorObj = await res.json();
       setAuthorObj(authorObj.map((e) => e));
     };
-    
+
     getAuthors().catch(console.error);
   }, []);
-  
 
   const groupNumberOptions = ["solo", "2", "3", "4", "5", "6", "7", "8+"];
-  const flightHourOptions = ["1","2","3","4","5","6","7","8","9","10+"];
+  const flightHourOptions = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10+",
+  ];
 
   const handleInputChange = (e) => {
+    if(e.target.type ==='file'){
+      const newFile = URL.createObjectURL(e.target.files[0]);
+      setFile(newFile);
+
+
+    } else {
     setField({
       ...field,
       [e.target.name]: e.target.value,
     });
-  };
+    console.log('thisonehere',field);
+  }};
 
   const handleCalendarChange = (v, key) => {
     setField({
@@ -75,26 +92,36 @@ const [field, setField] = useState({
   //   setUrl(files[0].thumbnailLink)
   // }
 
-  console.log("field", field);
-
 
   const handleSubmit = async (event) => {
-    await fetch("http://localhost:3003/posts",{
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('destination', field.destination);
+    formData.append('groupSize', field.groupSize);
+    formData.append('flightHours', field.flightHours);
+    formData.append('checkIn', field.checkIn);
+    formData.append('checkOut', field.checkOut);
+    formData.append('summary', field.summary);
+    formData.append('author',field.author);
+    formData.append('file', file);
+    console.log('file',file);
+    await fetch("http://localhost:3003/posts", {
       method: "POST",
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        // Accept: "application/json",
+        // "Content-Type": "multipart/form-data",
       },
-      body: JSON.stringify({
-        destination: field.destination,
-        summary: field.summary,
-        author: field.author,
-        groupSize: field.groupSize ,
-        flightHours: field.flightHours,
-        checkIn: field.checkIn,
-        checkOut: field.checkOut,
-
-      }),
+      body: formData
+      // JSON.stringify({
+      //   destination: field.destination,
+      //   summary: field.summary,
+      //   author: field.author,
+      //   groupSize: field.groupSize,
+      //   flightHours: field.flightHours,
+      //   checkIn: field.checkIn,
+      //   checkOut: field.checkOut,
+      //   file:field.file
+      // }),
     })
       .then((response) => {
         response.redirect("http://localhost:3000/discover");
@@ -105,6 +132,8 @@ const [field, setField] = useState({
       })
       .catch(console.error);
   };
+  console.log("field", field.file);
+
 
   return (
     <Grid
@@ -115,7 +144,6 @@ const [field, setField] = useState({
       direction="column"
     >
       <Grid item xs={12}>
-   
         <Box
           component="form"
           noValidate
@@ -203,7 +231,7 @@ const [field, setField] = useState({
                   name="checkOut"
                   value={field.checkOut}
                   onChange={(e) => {
-                    handleCalendarChange(e.$d, "checkOut")
+                    handleCalendarChange(e.$d, "checkOut");
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -255,13 +283,27 @@ const [field, setField] = useState({
               </div>
             </Box>
             {/* <img src={url} alt=""/> */}
+            <form action="/profile" method="post" enctype="multipart/form-data">
+            <Button variant="contained" component="label" sx={{ pt: "5px" }}>
+              Upload File
+              <input
+              id="file"
+              label="file"
+              name="file"
+                type="file"
+                hidden
+                onChange={(e) => {
+                  handleInputChange(e);
+                }}
+              />
+            </Button>
+            </form>
             <Button
               sx={{ mt: "10px" }}
               onClick={handleSubmit}
               variant="contained"
               component={Link}
               to="/discover"
-             
             >
               Submit
             </Button>

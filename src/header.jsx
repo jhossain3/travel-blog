@@ -16,7 +16,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Link } from "react-router-dom";
 
 
-const pages = ['Discover', 'About', 'Create'];
+const pages = ['Discover', 'Create','About' ];
 const settings = ['Profile', 'Logout'];
 
 export default function Header () {
@@ -39,7 +39,7 @@ export default function Header () {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" elevation={0}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LuggageIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

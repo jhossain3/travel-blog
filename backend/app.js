@@ -7,10 +7,13 @@ const fetch = require("isomorphic-fetch");
 const db = require("./data/database");
 const { createSearchParams } = require("react-router-dom");
 const app = express();
+const multer = require('multer');
+
+
+const upload = multer({ dest:'./images'});
 
 
 const bp = require('body-parser');
-const { red } = require("@mui/material/colors");
 
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
@@ -25,41 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// const dbx = new Dropbox({
-//   accessToken : 'sl.BQPf2XtpMYmY3MsBqGpSdjQzy-N4UyfpWqUCcXNWYwRCG3-erTe75B_J0qZ_L4zRPSRXBOxIZnxHxlU-iyX_gL9wPBHISCFFAfw_ZAQrgYWczDP2Y0hnfqUg9DYYMuqYVrDHb9U',
-//   fetch: fetch
-// })
-
-// app.post("/dbx", (req, res) => {
-
-//   console.log('sadiyah smeellssss');
-//   let imageArray;
-
-// //I receive either a single image or an array of images from the front end and
-// //its placed in req.files by express-fileupload
-
-//   if (req.files.itemImage.length) {
-//     imageArray = [...req.files.itemImage];
-//   } else {
-//     imageArray = [req.files.itemImage];
-//   }
-
-//   imageArray.forEach(image => {
-//   console.log("Image==>>",image)
-
-//   dbx
-//   .filesUpload({
-//     path: `/${image.name}`,
-//     contents: image.data
-//   })
-//   .then(response => {
-//     console.log(response);
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
-// });
-// });
 
 const getPosts = async (req, res) => {
   try {
@@ -79,11 +47,6 @@ const getPosts = async (req, res) => {
     console.log(e);
   }
 };
-
-const dropBox = async ( req, res) => {
-
-
-}
 
 const getPostById = async (req, res) => {
   try {
@@ -122,9 +85,6 @@ const getPostById = async (req, res) => {
 
 };
 
-
-
-
 app.get("/getAuthors", async function (req, res) {
   try {
     console.log("hi world");
@@ -138,45 +98,21 @@ app.get("/getAuthors", async function (req, res) {
   }
 });
 
-// app.post("/posts", async function (req, res) {
-//   try{
-//     const postId = new ObjectId(req.body._id);
-//     console.log(postId);
-//     const result = await db.getDb().collection('posts')
-//     .updateOne(
-//       { _id: postId },
-//     {
-//         $set:{
-//           destination: req.body.destination,
-//           summary: req.body.summary,
-//           author: req.body.author,
-//           groupSize: req.body.groupSize ,
-//           flightHours: req.body.flightHours,
-//           checkIn: req.body.checkIn,
-//           checkOut: req.body.checkOut,
-//         },
-//       }
-  
-//     );
-//     res.redirect("/discover")
-//   }
-//   catch(e){
-//     console.log(e);
-//   }
-// });
 
-app.post("/posts", async function (req, res) {
+app.post("/posts",upload.single('file'), async function (req, res) {
   try{  
     const authorId = new ObjectId(req.body.author);
+    console.log('req.body',req.body);
+    console.log('file',req.file);
     const author = await db.getDb().collection("authors").findOne({ _id: authorId });
-    const newPost = {
+    const newPost = { 
       destination: req.body.destination,
       groupSize: req.body.groupSize,
       flightHours: req.body.flightHours,
       summary: req.body.summary,
       checkIn: req.body.checkIn,
       checkOut: req.body.checkOut,
-      pictures: req.body.pictures,
+      picture:req.body.file,
       dateNow: new Date(),
       author: {
         id: authorId,
@@ -185,47 +121,63 @@ app.post("/posts", async function (req, res) {
       },
     };
     const result = await db.getDb().collection('posts').insertOne(newPost);
-    console.log(result);
+
+    console.log('insertedone',result);
 
   }
   catch(e){
     console.log(e);
   }
 
-
 });
 
+const deletePost = async (req, res) => {
+  
+  const postId = new ObjectId(req.params.id);
+  const result = await db.getDb().collection('posts').deleteOne({_id: postId});
+  console.log(result);
+  
+}
 
 app.get("/hello", async function (req, res) {
   try {
-    res.send("dinkey");
+    res.send("donkey");
     
   } catch (e) {
     console.log(e);
   }
 });
 
-// app.post("/hello", async function (req, res) {
-//   try {
-//     res.send("dinkey");
-    
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
-
-// app.route('/hello')
-//   .get(getDonkey);
-
-
-// app.route( '/dbx').get(dropBox);
-
-
 app.route('/posts')
   .get(getPosts);
  
-
 app.route('/posts/:id')
   .get(getPostById);
+
+  app.route('/posts/:id/delete')
+  .get(getPostById);
+
+  app.route('/posts/:id/edit')
+  .get(getPostById);
+
+app.post('/posts/:id/delete', deletePost);
+ 
+app.post('/posts/:id/edit', function(req,res){
+
+  const postId = new ObjectId(req.params.id);
+  console.log('postId',postId);
+
+    const updatedPost = {
+      destination: req.body.destination,
+      groupSize: req.body.groupSize,
+      flightHours: req.body.flightHours,
+      summary: req.body.summary,
+      checkIn: req.body.checkIn,
+      checkOut: req.body.checkOut,
+      pictures: req.body.pictures,
+    };
+  const result = db.getDb().collection('posts').updateOne({_id: postId}, {$set: updatedPost});
+  console.log(result);
+});
 
 app.listen(3003);

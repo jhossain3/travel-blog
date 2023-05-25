@@ -18,7 +18,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <GlobalStyles
         styles={{
-          body: { backgroundColor: "#E6EFD1" },
+          body: { backgroundColor: "#FFFFFF" },
         }}
       />
 

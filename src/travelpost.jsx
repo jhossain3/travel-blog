@@ -40,7 +40,7 @@ export default function TravelPost({ match }) {
           sx={{
             height: "500px",
             width: "100%",
-            backgroundImage: `url(${travelImage})`,
+            backgroundImage: `url(${post.picture})`,
             objectFit: "cover",
             objectPosition: "50% 50%",
           }}

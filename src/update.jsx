@@ -86,7 +86,8 @@ const [authorObj, setAuthorObj] = useState([]);
 
 //post req
   const handleSubmit = async (event) => {
-    await fetch(`http://localhost:3003/posts`, {
+    console.log(post.destination);
+    await fetch(`http://localhost:3003/posts/${id}/edit`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -96,22 +97,22 @@ const [authorObj, setAuthorObj] = useState([]);
         destination: post.destination,
         summary: post.summary,
         author: post.author,
-        groupSize: post.groupSize ,
+        groupSize: post.groupSize,
         flightHours: post.flightHours,
         checkIn: post.checkIn,
         checkOut: post.checkOut,
         // pictures: post.pictures,
-    
-
       }),
     })
-      .then((response) => {
-        response.redirect("http://localhost:3000/discover");
-        console.log("response", response);
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
-        }
-      })
+    
+      // .then((response) => {
+      //   response.redirect("http://localhost:3000/discover");
+      //   window.location.reload();
+      //   console.log("response", response);
+      //   if (!response.ok) {
+      //     throw new Error("Network response was not ok.");
+      //   }
+      // })
       .catch(console.error);
   };
 
@@ -239,30 +240,6 @@ const [authorObj, setAuthorObj] = useState([]);
               value={post.summary}
               onChange={handleInputChange}
             />
-            <Box sx={{ minWidth: 120 }}>
-              <div>
-                <FormControl sx={{ m: 1, width: 300 }}>
-                  <InputLabel id="name-label">Author</InputLabel>
-
-                  <Select
-                    name="author"
-                    labelId="author"
-                    id="author"
-                    value={post.author.id}
-                    onChange={(e) => {
-                      handleInputChange(e);
-                    }}
-                    input={<OutlinedInput label="Author" />}
-                  >
-                    {authorObj?.map((i) => (
-                      <MenuItem value={i._id} key={i._id}>
-                        {i.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-            </Box>
             {/* <img src={url} alt=""/> */}
             <Button
               sx={{ mt: "10px" }}
