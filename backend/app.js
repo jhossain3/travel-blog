@@ -4,19 +4,25 @@ const express = require("express");
 const { ObjectId } = require("mongodb");
 const Dropbox = require("dropbox").Dropbox;
 const fetch = require("isomorphic-fetch");
+const bcrypt = require('bcryptjs');
 const db = require("./data/database");
 const { createSearchParams } = require("react-router-dom");
 const app = express();
 const multer = require('multer');
 
 
-const upload = multer({ dest:'./images'});
+const storageConfig = multer.diskStorage({
+  destination: './images',
+  filename: function(req,file,cb){
+    cb( null, file.originalname);
 
-
+  }
+})
+const upload = multer({storage: storageConfig });
 const bp = require('body-parser');
-
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
+app.use('/images', express.static('images'));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -98,12 +104,50 @@ app.get("/getAuthors", async function (req, res) {
   }
 });
 
+app.post("/users", async function (req,res){
+  try{ console.log('req.bodyuser', req.body);
+  const newUser = {
+    user:req.body.user,
+    email:req.body.email,
+    confirmemail:req.body.confirmemail,
+    password: await bcrypt.hash(req.body.password,12)
+  }
+  await db.getDb().collection('users').insertOne(newUser);
+  res.redirect('http://localhost:3000/discover');
+ }
+  catch(e){
+    console.log(e);
+  }
+ 
+
+})
+
+
+const getUsers = async (req, res) => {
+  try {
+    console.log("hi");
+    db.connectToDatabase();
+    var userArray = [];
+    userArray = await db
+    .getDb()
+    .collection("users")
+    .find()
+    .toArray();
+    console.log(JSON.stringify(userArray));
+    const users = userArray;
+    res.send(users);
+    
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 app.post("/posts",upload.single('file'), async function (req, res) {
   try{  
     const authorId = new ObjectId(req.body.author);
     console.log('req.body',req.body);
     console.log('file',req.file);
+    const uploadedImage = req.file;
     const author = await db.getDb().collection("authors").findOne({ _id: authorId });
     const newPost = { 
       destination: req.body.destination,
@@ -112,7 +156,7 @@ app.post("/posts",upload.single('file'), async function (req, res) {
       summary: req.body.summary,
       checkIn: req.body.checkIn,
       checkOut: req.body.checkOut,
-      picture:req.body.file,
+      picture:uploadedImage.path,
       dateNow: new Date(),
       author: {
         id: authorId,
@@ -147,6 +191,8 @@ app.get("/hello", async function (req, res) {
     console.log(e);
   }
 });
+
+app.route('/users').get(getUsers);
 
 app.route('/posts')
   .get(getPosts);

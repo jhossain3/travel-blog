@@ -18,9 +18,7 @@ import {
   OutlinedInput,
   Select,
 } from "@mui/material";
-// import ImageUploadCard from "./ImageUpload";
-// import DropboxChooser from 'react-dropbox-chooser';
-// import { Dropbox } from 'dropbox';
+
 
 export default function Create() {
   const [authorObj, setAuthorObj] = useState([]);
@@ -36,8 +34,8 @@ export default function Create() {
     author: "",
   });
   const [file, setFile] = useState();
-  console.log('file', file);
 
+  console.log("file", file);
   console.log("field", field);
 
   useEffect(() => {
@@ -65,18 +63,17 @@ export default function Create() {
   ];
 
   const handleInputChange = (e) => {
-    if(e.target.type ==='file'){
-      const newFile = URL.createObjectURL(e.target.files[0]);
+    if (e.target.type === "file") {
+      const newFile = (e.target.files[0]);
       setFile(newFile);
-
-
     } else {
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
-    });
-    console.log('thisonehere',field);
-  }};
+      setField({
+        ...field,
+        [e.target.name]: e.target.value,
+      });
+      console.log("thisonehere", field);
+    }
+  };
 
   const handleCalendarChange = (v, key) => {
     setField({
@@ -85,43 +82,22 @@ export default function Create() {
     });
   };
 
-  // const handleSuccess = (files) => {
-  //   console.log('hi');
-
-  //   console.log(files[0].thumbnailLink);
-  //   setUrl(files[0].thumbnailLink)
-  // }
-
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('destination', field.destination);
-    formData.append('groupSize', field.groupSize);
-    formData.append('flightHours', field.flightHours);
-    formData.append('checkIn', field.checkIn);
-    formData.append('checkOut', field.checkOut);
-    formData.append('summary', field.summary);
-    formData.append('author',field.author);
-    formData.append('file', file);
-    console.log('file',file);
+    formData.append("destination", field.destination);
+    formData.append("groupSize", field.groupSize);
+    formData.append("flightHours", field.flightHours);
+    formData.append("checkIn", field.checkIn);
+    formData.append("checkOut", field.checkOut);
+    formData.append("summary", field.summary);
+    formData.append("author", field.author);
+    formData.append("file", file);
+    console.log("file", file);
     await fetch("http://localhost:3003/posts", {
       method: "POST",
-      headers: {
-        // Accept: "application/json",
-        // "Content-Type": "multipart/form-data",
-      },
-      body: formData
-      // JSON.stringify({
-      //   destination: field.destination,
-      //   summary: field.summary,
-      //   author: field.author,
-      //   groupSize: field.groupSize,
-      //   flightHours: field.flightHours,
-      //   checkIn: field.checkIn,
-      //   checkOut: field.checkOut,
-      //   file:field.file
-      // }),
+      body: formData,
+
     })
       .then((response) => {
         response.redirect("http://localhost:3000/discover");
@@ -133,7 +109,6 @@ export default function Create() {
       .catch(console.error);
   };
   console.log("field", field.file);
-
 
   return (
     <Grid
@@ -284,19 +259,19 @@ export default function Create() {
             </Box>
             {/* <img src={url} alt=""/> */}
             <form action="/profile" method="post" enctype="multipart/form-data">
-            <Button variant="contained" component="label" sx={{ pt: "5px" }}>
-              Upload File
-              <input
-              id="file"
-              label="file"
-              name="file"
-                type="file"
-                hidden
-                onChange={(e) => {
-                  handleInputChange(e);
-                }}
-              />
-            </Button>
+              <Button variant="contained" component="label" sx={{ pt: "5px" }}>
+                Upload File
+                <input
+                  id="file"
+                  label="file"
+                  name="file"
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    handleInputChange(e);
+                  }}
+                />
+              </Button>
             </form>
             <Button
               sx={{ mt: "10px" }}

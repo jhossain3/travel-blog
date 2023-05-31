@@ -71,11 +71,12 @@ export default function Discover() {
           return (
             <Grid key={i} item>
               <CardActionArea component={Link} to={`/posts/${posts[i]._id}`}>
+                
                 <Card
                   sx={{
                     minHeight: "280px",
                     minWidth: 320,
-                    backgroundImage: `url(${backgroundImage1})`,
+                    backgroundImage: `url(http://localhost:3003/${posts[i].picture})`,
                     backgroundSize: "cover",
                     display: "flex",
                     flexDirection: "column",
