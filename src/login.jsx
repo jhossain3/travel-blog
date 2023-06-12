@@ -5,9 +5,41 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
 
-const handleChange = (e) => {
+const [form, setForm] = useState({
+  username: "",
+  password: "",
+});
 
-}
+const handleChange = (e) => {
+  setForm({ ...form, [e.target.name]: e.target.value });
+  console.log("form", form);
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log('submit');
+  await fetch("http://localhost:3003/login", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+
+    },
+    body: JSON.stringify({
+      username: form.username,
+      password: form.password,
+    }),
+  })
+    .then((response) => {
+      console.log("response", response);
+      window.location.href = 'http://localhost:3000/discover'
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+    })
+    .catch(console.error);
+};
 
   return (
     <Grid

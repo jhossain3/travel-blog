@@ -33,8 +33,8 @@ export default function Signup() {
       }),
     })
       .then((response) => {
+        console.log('rspnse', response);
         response.redirect("http://localhost:3000/discover");
-        console.log("response", response);
         if (!response.ok) {
           throw new Error("Network response was not ok.");
         }

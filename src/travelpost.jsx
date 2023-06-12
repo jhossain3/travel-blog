@@ -17,9 +17,6 @@ export default function TravelPost({ match }) {
   
   const { id } = useParams();
 
-  const travelImage =
-    "https://images.unsplash.com/photo-1480796927426-f609979314bd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8amFwYW58ZW58MHx8MHx8&auto=format&fit=crop&w=700&q=60";
-
   useEffect(() => {
     const getPostById = async () => {
       let res = await fetch(`http://localhost:3003/posts/${id}`);
@@ -30,10 +27,8 @@ export default function TravelPost({ match }) {
     getPostById().catch(console.error);
   },[]);
   console.log(post);
-
     
   return (
-  
     <Grid container justifyContent="center" sx={{ mt: "50px", mb: "10px" }}>
       <Grid item xs={8}>
         <CardMedia

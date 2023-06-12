@@ -16,7 +16,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Link } from "react-router-dom";
 
 
-const pages = ['Discover', 'Create','About', 'SignUp' ];
+const pages = ['Discover', 'Create','About', 'SignUp', 'login' ];
 const settings = ['Profile', 'Logout'];
 
 export default function Header () {

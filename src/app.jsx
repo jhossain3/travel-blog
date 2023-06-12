@@ -13,6 +13,7 @@ import Create from "./create";
 import Signup from './signUp';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./header.jsx";
+import Login from "./login";
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/create" element={<Create />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/login"  element={<Login />}></Route>
 
         </Routes>
         <Footer />

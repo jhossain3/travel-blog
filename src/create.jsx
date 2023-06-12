@@ -100,6 +100,7 @@ export default function Create() {
 
     })
       .then((response) => {
+        console.log('response',response)
         response.redirect("http://localhost:3000/discover");
         console.log("response", response);
         if (!response.ok) {
