@@ -17,8 +17,21 @@ const backgroundImage1 =
 
 export default function Discover() {
   const [posts, setPosts] = useState([]);
+  const [username, setUsername] = useState("");
+  const[password, setPassword] = useState("");
 
   useEffect(() => {
+     fetch("http://localhost:3003/login", {
+      method: "GET",
+      headers:{
+        withCredentials: true
+      },
+      username: username,
+      password: password
+    }).then((response) => {
+      console.log('resp login', response.json());
+    })
+  
     const getPosts = async () => {
       let res = await fetch("http://localhost:3003/posts/");
       const postObj = await res.json();
@@ -27,6 +40,10 @@ export default function Discover() {
 
     getPosts().catch(console.error);
   }, []);
+
+  // useEffect(() => {
+   
+  // }, [])
 
   const deletePost = async (id) => {
     console.log('delete triggered')
@@ -55,9 +72,7 @@ export default function Discover() {
       </Typography>
     );
   }
-  posts.forEach(function (entry) {
-    console.log(entry);
-  });
+ 
 
   return (
     //   posts.map((item, i) => {

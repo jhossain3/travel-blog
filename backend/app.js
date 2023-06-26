@@ -7,16 +7,36 @@ const fetch = require("isomorphic-fetch");
 const bcrypt = require("bcryptjs");
 const db = require("./data/database");
 const { createSearchParams } = require("react-router-dom");
-const cors = require('cors')
+const cors = require("cors");
 const app = express();
-const multer = require("multer");
-app.use(cors({
-  origin: 'http://localhost:3000'
-}))
+const session = require("express-session");
+var MongoDBStore = require("connect-mongodb-session")(session);
 
-app.options('/login', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Methods', 'POST');
+var storeSessions = new MongoDBStore({
+  uri: "mongodb://localhost:27017",
+  databaseName: "travelblug",
+  collection: "sessions",
+});
+
+const multer = require("multer");
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
+
+app.use(
+  session({
+    secret: "1234",
+    resave: false,
+    saveUninitialized: false,
+    store: storeSessions,
+  })
+);
+
+app.options("/login", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "POST");
   res.sendStatus(200);
 });
 
@@ -33,7 +53,6 @@ app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
 app.use("/images", express.static("images"));
 
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -46,11 +65,10 @@ app.use((req, res, next) => {
 
 const getPosts = async (req, res) => {
   try {
-    console.log("hi");
+    console.log("here", req.session.user);
     db.connectToDatabase();
     var postArray = [];
     postArray = await db.getDb().collection("posts").find().toArray();
-    console.log(JSON.stringify(postArray));
     const posts = postArray;
     res.send(posts);
   } catch (e) {
@@ -60,7 +78,6 @@ const getPosts = async (req, res) => {
 
 const getPostById = async (req, res) => {
   try {
-    console.log("hi");
     db.connectToDatabase();
     var postArray = [];
     postArray = await db.getDb().collection("posts").find().toArray();
@@ -68,18 +85,9 @@ const getPostById = async (req, res) => {
     const url = req.params.id;
 
     const post = postArray.filter((p) => p._id.toString() === url);
-    // post.humanReadableDate = post.dateNow.toLocaleDateString('en-GB',{
-    //   weekday:'long',
-    //   year:'numeric',
-    //   month:'long',
-    //   day:'numeric',
-    // })
-
-    // post.dateNow.date = post.dateNow.date.toISOString();
 
     if (post[0]) {
       res.send(post[0]);
-      console.log(post[0]);
     } else {
       console.log("it empty");
     }
@@ -90,11 +98,9 @@ const getPostById = async (req, res) => {
 
 app.get("/getAuthors", async function (req, res) {
   try {
-    console.log("hi world");
     db.connectToDatabase();
     var authorArray = [];
     authorArray = await db.getDb().collection("authors").find().toArray();
-    console.log(JSON.stringify(authorArray));
     res.send(authorArray);
   } catch (e) {
     console.log(e);
@@ -103,7 +109,6 @@ app.get("/getAuthors", async function (req, res) {
 
 app.post("/users", async function (req, res) {
   try {
-    console.log("req.bodyuser", req.body);
     const newUser = {
       user: req.body.username,
       email: req.body.email,
@@ -119,24 +124,19 @@ app.post("/users", async function (req, res) {
 
 app.post("/login", async function (req, res) {
   try {
-    console.log("req.bodyuser", req.body);
     const userData = req.body;
     const enteredUsername = userData.username;
     const enteredPassword = userData.password;
-    console.log('eneteresuername', enteredUsername);
     const existingUser = await db
       .getDb()
       .collection("users")
       .findOne({ user: enteredUsername });
-      
-
-      console.log('existingUser',existingUser);
 
     if (!existingUser) {
       console.log("couldnt log in");
       return res.redirect("http://localhost:3000/login");
     }
-    
+
     const passwordCorrect = await bcrypt.compare(
       enteredPassword,
       existingUser.password
@@ -146,20 +146,47 @@ app.post("/login", async function (req, res) {
       console.log("password wrong");
       return res.redirect("http://localhost:3000/login");
     }
+    
     console.log("user authenticated");
-    return res.json(200);
+    req.session.user = { id: existingUser._id, email: existingUser.email };
+    console.log("req.session.user", req.session.user);
+    req.session.isAuthenticated = true;
+    const result = req.session.user;
+    req.session.save(function () {
+      return res.send(result);
+    });
   } catch (e) {
     console.log(e);
   }
 });
 
+
+app.get("/login", (req, res) => {
+  if (req.session) {
+    console.log("succesful");
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    console.log("not success");
+    console.log('req.session.user',req.session.user);
+    res.send({ loggedIn: false });
+  }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.user = null;
+  req.session.isAuthenticated = false;
+
+  return res.send(200);
+
+});
+
+
 const getUsers = async (req, res) => {
   try {
-    console.log("hi");
     db.connectToDatabase();
     var userArray = [];
     userArray = await db.getDb().collection("users").find().toArray();
-    console.log(JSON.stringify(userArray));
+
     const users = userArray;
     res.send(users);
   } catch (e) {
@@ -167,12 +194,9 @@ const getUsers = async (req, res) => {
   }
 };
 
-
 app.post("/posts", upload.single("file"), async function (req, res) {
   try {
     const authorId = new ObjectId(req.body.author);
-    console.log("req.body", req.body);
-    console.log("file", req.file);
     const uploadedImage = req.file;
     const author = await db
       .getDb()
@@ -194,8 +218,6 @@ app.post("/posts", upload.single("file"), async function (req, res) {
       },
     };
     const result = await db.getDb().collection("posts").insertOne(newPost);
-
-    console.log("insertedone", result);
   } catch (e) {
     console.log(e);
   }
@@ -218,8 +240,9 @@ app.get("/hello", async function (req, res) {
   }
 });
 
-app.route("/users").get(getUsers);
 
+
+app.route("/users").get(getUsers);
 
 app.route("/posts").get(getPosts);
 
@@ -233,7 +256,6 @@ app.post("/posts/:id/delete", deletePost);
 
 app.post("/posts/:id/edit", function (req, res) {
   const postId = new ObjectId(req.params.id);
-  console.log("postId", postId);
 
   const updatedPost = {
     destination: req.body.destination,
@@ -248,7 +270,6 @@ app.post("/posts/:id/edit", function (req, res) {
     .getDb()
     .collection("posts")
     .updateOne({ _id: postId }, { $set: updatedPost });
-  console.log(result);
 });
 
 app.listen(3003);

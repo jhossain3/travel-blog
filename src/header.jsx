@@ -38,6 +38,17 @@ export default function Header () {
     setAnchorElUser(null);
   };
 
+  const logout = () => {
+    fetch("http://localhost:3003/logout", {
+      method: "GET",
+      headers:{
+        withCredentials: true
+      },
+    }).then((response) => {
+      console.log('resp logout', response.json());
+    })
+  
+  }
   return (
     <AppBar position="static" elevation={0}>
       <Container maxWidth="xl">
@@ -156,11 +167,14 @@ export default function Header () {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+             
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">profile</Typography>
                 </MenuItem>
-              ))}
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={logout}>logout</Typography>
+                </MenuItem>
+              
             </Menu>
           </Box>
         </Toolbar>
