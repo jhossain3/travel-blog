@@ -11,6 +11,10 @@ const cors = require("cors");
 const app = express();
 const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
+app.use(express.json());
 
 var storeSessions = new MongoDBStore({
   uri: "mongodb://localhost:27017",
@@ -19,12 +23,14 @@ var storeSessions = new MongoDBStore({
 });
 
 const multer = require("multer");
+
 app.use(
   cors({
     origin: "http://localhost:3000",
   })
 );
 
+app.set('trust proxy', 1) // trust first proxy
 app.use(
   session({
     secret: "1234",
@@ -122,6 +128,19 @@ app.post("/users", async function (req, res) {
   }
 });
 
+// function authenticateToken(req,res,next){
+//   const authHeader = req.headers['authorization']
+//   const token = authHeader && authHeader.split('')[1]
+//   if (token == null ){
+//     return res.sendStatus(401)
+//   }
+//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,( err, user) => {
+//     if (err)  return res.sendStatus(403)
+//     req.user = user
+//     next()
+//   })
+// }
+
 app.post("/login", async function (req, res) {
   try {
     const userData = req.body;
@@ -147,14 +166,10 @@ app.post("/login", async function (req, res) {
       return res.redirect("http://localhost:3000/login");
     }
     
-    console.log("user authenticated");
-    req.session.user = { id: existingUser._id, email: existingUser.email };
-    console.log("req.session.user", req.session.user);
-    req.session.isAuthenticated = true;
-    const result = req.session.user;
-    req.session.save(function () {
-      return res.send(result);
-    });
+    const accessToken = jwt.sign(enteredUsername, process.env.ACCESS_TOKEN_SECRET);
+    console.log('accessToken',accessToken);
+    return res.send({token: accessToken});
+
   } catch (e) {
     console.log(e);
   }
@@ -162,7 +177,7 @@ app.post("/login", async function (req, res) {
 
 
 app.get("/login", (req, res) => {
-  if (req.session) {
+  if (req.session.user) {
     console.log("succesful");
     res.send({ loggedIn: true, user: req.session.user });
   } else {

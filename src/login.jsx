@@ -2,8 +2,10 @@ import * as React from "react";
 import { useState } from "react";
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSignIn } from 'react-auth-kit';
 
 export default function Login() {
+const signIn = useSignIn();
 
 const [form, setForm] = useState({
   username: "",
@@ -30,15 +32,34 @@ const handleSubmit = async (e) => {
       password: form.password,
     }),
   })
-    .then((response) => {
-      console.log("response", response);
-      window.location.href = 'http://localhost:3000/discover'
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok.");
-      }
+    .then(response => response.json()) 
+    .then(data => {
+      const userToken = data.token;
+      signIn({
+        token: userToken,
+        expiresIn: 3600,
+        tokenType: "Bearer",
+        authState: { username: form.username }
+      })
+      console.log('token', userToken);
+      // window.location.href = 'http://localhost:3000/discover'
     })
-    .catch(console.error);
+    .catch(error => {
+      console.log(error);
+    })
+      // signIn({
+      //   token: response.data.token,
+      //   expiresIn: 3600,
+      //   tokenType: "Bearer",
+      //   authState: { username: form.username }
+
+      // window.location.href = 'http://localhost:3000/discover'
+
+    //   if (!response.ok) {
+    //     throw new Error("Network response was not ok.");
+    //   }
+    // })
+
 };
 
   return (

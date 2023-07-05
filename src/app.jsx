@@ -11,9 +11,10 @@ import TravelPost from "./travelpost";
 import Update from "./update";
 import Create from "./create";
 import Signup from './signUp';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Header from "./header.jsx";
 import Login from "./login";
+import { RequireAuth } from 'react-auth-kit'
 
 const App = () => {
   return (
@@ -23,8 +24,6 @@ const App = () => {
           body: { backgroundColor: "#FFFFFF" },
         }}
       />
-
-      <BrowserRouter>
         <Header />
         <Routes>
           <Route path="/" element={<Home />}></Route>
@@ -33,13 +32,12 @@ const App = () => {
           <Route path="/posts/:id" element={<TravelPost />}></Route>
           <Route path="/posts/:id/edit" element={<Update />}></Route>
           <Route path="/create" element={<Create />}></Route>
-          <Route path="/about" element={<About />}></Route>
+          <Route path="/about" element={<RequireAuth loginPath ="/login"><About /></RequireAuth>}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/login"  element={<Login />}></Route>
 
         </Routes>
         <Footer />
-      </BrowserRouter>
     </ThemeProvider>
   );
 };
