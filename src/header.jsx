@@ -46,6 +46,7 @@ export default function Header () {
       },
     }).then((response) => {
       console.log('resp logout', response.json());
+      window.location.href = 'http://localhost:3000/login'
     })
   
   }

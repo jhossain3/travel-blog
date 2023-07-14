@@ -17,7 +17,9 @@ import Login from "./login";
 import { RequireAuth } from 'react-auth-kit'
 
 const App = () => {
+  console.log('here;', document.cookie);
   return (
+  
     <ThemeProvider theme={theme}>
       <GlobalStyles
         styles={{

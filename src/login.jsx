@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSignIn } from 'react-auth-kit';
+import { useCookies } from 'react-cookie';
 
 export default function Login() {
 const signIn = useSignIn();
 
+const [cookies, setCookie] = useCookies();
 const [form, setForm] = useState({
   username: "",
   password: "",
@@ -32,17 +34,19 @@ const handleSubmit = async (e) => {
       password: form.password,
     }),
   })
-    .then(response => response.json()) 
+    .then(response => response.json() 
+    ) 
     .then(data => {
       const userToken = data.token;
       signIn({
         token: userToken,
-        expiresIn: 3600,
+        expiresIn: 3600000,
         tokenType: "Bearer",
-        authState: { username: form.username }
+        authState: { name: form.username }
       })
+      // setCookie('mySessionCookie', userToken , { path: '/', expiresIn: 3600000 });
       console.log('token', userToken);
-      // window.location.href = 'http://localhost:3000/discover'
+      // window.location.href = 'http://localhost:3000/about'
     })
     .catch(error => {
       console.log(error);

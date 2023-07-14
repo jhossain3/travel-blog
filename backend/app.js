@@ -12,7 +12,8 @@ const app = express();
 const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
+
+
 
 app.use(express.json());
 
@@ -22,6 +23,17 @@ var storeSessions = new MongoDBStore({
   collection: "sessions",
 });
 
+app.use(
+  session({
+    secret: "1234",
+    name: 'mySessionCookie',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+    store: storeSessions,
+    
+  })
+);
 const multer = require("multer");
 
 app.use(
@@ -31,14 +43,7 @@ app.use(
 );
 
 app.set('trust proxy', 1) // trust first proxy
-app.use(
-  session({
-    secret: "1234",
-    resave: false,
-    saveUninitialized: false,
-    store: storeSessions,
-  })
-);
+
 
 app.options("/login", (req, res) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -165,12 +170,22 @@ app.post("/login", async function (req, res) {
       console.log("password wrong");
       return res.redirect("http://localhost:3000/login");
     }
-    
-    const accessToken = jwt.sign(enteredUsername, process.env.ACCESS_TOKEN_SECRET);
-    console.log('accessToken',accessToken);
-    return res.send({token: accessToken});
 
-  } catch (e) {
+    req.session.user = {id: existingUser._id}
+    req.session.isAuthenticated = true;
+    console.log('session',req.sessionID);
+    req.session.save(function(){
+      res.send({token: req.sessionID})
+
+      
+    })
+  }
+    
+    // const accessToken = jwt.sign(enteredUsername, process.env.ACCESS_TOKEN_SECRET);
+    // console.log('accessToken',accessToken);
+    //   return res.send({token: accessToken});
+
+    catch (e) {
     console.log(e);
   }
 });
