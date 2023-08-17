@@ -10,15 +10,17 @@ import About from "./about";
 import TravelPost from "./travelpost";
 import Update from "./update";
 import Create from "./create";
+import Signup from './signUp';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./header.jsx";
+import Login from "./login";
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles
         styles={{
-          body: { backgroundColor: "#E6EFD1" },
+          body: { backgroundColor: "#FFFFFF" },
         }}
       />
 
@@ -32,6 +34,8 @@ const App = () => {
           <Route path="/posts/:id/edit" element={<Update />}></Route>
           <Route path="/create" element={<Create />}></Route>
           <Route path="/about" element={<About />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/login"  element={<Login />}></Route>
 
         </Routes>
         <Footer />

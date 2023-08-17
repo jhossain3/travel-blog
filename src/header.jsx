@@ -16,7 +16,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Link } from "react-router-dom";
 
 
-const pages = ['Discover', 'About', 'Create'];
+const pages = ['Discover', 'Create','About', 'SignUp', 'login' ];
 const settings = ['Profile', 'Logout'];
 
 export default function Header () {
@@ -38,8 +38,19 @@ export default function Header () {
     setAnchorElUser(null);
   };
 
+  const logout = () => {
+    fetch("http://localhost:3003/logout", {
+      method: "GET",
+      headers:{
+        withCredentials: true
+      },
+    }).then((response) => {
+      console.log('resp logout', response.json());
+    })
+  
+  }
   return (
-    <AppBar position="static">
+    <AppBar position="static" elevation={0}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LuggageIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -58,7 +69,7 @@ export default function Header () {
               textDecoration: 'none',
             }}
           >
-            TRAVEL BLOG
+            TRAVEL BLOG!
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -156,11 +167,14 @@ export default function Header () {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+             
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">profile</Typography>
                 </MenuItem>
-              ))}
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={logout}>logout</Typography>
+                </MenuItem>
+              
             </Menu>
           </Box>
         </Toolbar>
