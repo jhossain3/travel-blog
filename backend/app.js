@@ -11,6 +11,11 @@ const cors = require("cors");
 const app = express();
 const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
+require('dotenv').config();
+
+
+
+app.use(express.json());
 
 var storeSessions = new MongoDBStore({
   uri: "mongodb://localhost:27017",
@@ -18,21 +23,27 @@ var storeSessions = new MongoDBStore({
   collection: "sessions",
 });
 
+app.use(
+  session({
+    secret: "1234",
+    name: 'mySessionCookie',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+    store: storeSessions,
+    
+  })
+);
 const multer = require("multer");
+
 app.use(
   cors({
     origin: "http://localhost:3000",
   })
 );
 
-app.use(
-  session({
-    secret: "1234",
-    resave: false,
-    saveUninitialized: false,
-    store: storeSessions,
-  })
-);
+app.set('trust proxy', 1) // trust first proxy
+
 
 app.options("/login", (req, res) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -61,42 +72,6 @@ app.use((req, res, next) => {
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
-});
-
-const dbx = new Dropbox({
-  accessToken : 'sl.BQPf2XtpMYmY3MsBqGpSdjQzy-N4UyfpWqUCcXNWYwRCG3-erTe75B_J0qZ_L4zRPSRXBOxIZnxHxlU-iyX_gL9wPBHISCFFAfw_ZAQrgYWczDP2Y0hnfqUg9DYYMuqYVrDHb9U',
-  fetch: fetch
-})
-
-app.post("/dbx", (req, res) => {
-
-  console.log('sadiyah smeellssss');
-  let imageArray;
-
-//I receive either a single image or an array of images from the front end and
-//its placed in req.files by express-fileupload
-
-  if (req.files.itemImage.length) {
-    imageArray = [...req.files.itemImage];
-  } else {
-    imageArray = [req.files.itemImage];
-  }
-
-  imageArray.forEach(image => {
-  console.log("Image==>>",image)
-
-  dbx
-  .filesUpload({
-    path: `/${image.name}`,
-    contents: image.data
-  })
-  .then(response => {
-    console.log(response);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-});
 });
 
 const getPosts = async (req, res) => {
@@ -143,39 +118,120 @@ app.get("/getAuthors", async function (req, res) {
   }
 });
 
-// app.post("/posts", async function (req, res) {
-//   try{
-//     const postId = new ObjectId(req.body._id);
-//     console.log(postId);
-//     const result = await db.getDb().collection('posts')
-//     .updateOne(
-//       { _id: postId },
-//     {
-//         $set:{
-//           destination: req.body.destination,
-//           summary: req.body.summary,
-//           author: req.body.author,
-//           groupSize: req.body.groupSize ,
-//           flightHours: req.body.flightHours,
-//           checkIn: req.body.checkIn,
-//           checkOut: req.body.checkOut,
-//         },
-//       }
-  
-//     );
-//     res.redirect("/discover")
-//   }
-//   catch(e){
-//     console.log(e);
-//   }
-// });
+app.post("/users", async function (req, res) {
+  try {
+    const newUser = {
+      user: req.body.username,
+      email: req.body.email,
+      confirmemail: req.body.confirmemail,
+      password: await bcrypt.hash(req.body.password, 12),
+    };
+    await db.getDb().collection("users").insertOne(newUser);
+    res.redirect("http://localhost:3000/discover");
+  } catch (e) {
+    console.log(e);
+  }
+});
 
-app.post("/posts", async function (req, res) {
-  try{  
-    console.log('this is reqbody', req.body);
-    const authorId = ObjectId(req.body.author);
-    const author = await db.getDb().collection("authors").findOne({ _id: authorId });
-  
+// function authenticateToken(req,res,next){
+//   const authHeader = req.headers['authorization']
+//   const token = authHeader && authHeader.split('')[1]
+//   if (token == null ){
+//     return res.sendStatus(401)
+//   }
+//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,( err, user) => {
+//     if (err)  return res.sendStatus(403)
+//     req.user = user
+//     next()
+//   })
+// }
+
+app.post("/login", async function (req, res) {
+  try {
+    const userData = req.body;
+    const enteredUsername = userData.username;
+    const enteredPassword = userData.password;
+    const existingUser = await db
+      .getDb()
+      .collection("users")
+      .findOne({ user: enteredUsername });
+
+    if (!existingUser) {
+      console.log("couldnt log in");
+      return res.redirect("http://localhost:3000/login");
+    }
+
+    const passwordCorrect = await bcrypt.compare(
+      enteredPassword,
+      existingUser.password
+    );
+
+    if (!passwordCorrect) {
+      console.log("password wrong");
+      return res.redirect("http://localhost:3000/login");
+    }
+
+    req.session.user = {id: existingUser._id}
+    req.session.isAuthenticated = true;
+    console.log('session',req.sessionID);
+    req.session.save(function(){
+      res.send({token: req.sessionID})
+
+      
+    })
+  }
+    
+    // const accessToken = jwt.sign(enteredUsername, process.env.ACCESS_TOKEN_SECRET);
+    // console.log('accessToken',accessToken);
+    //   return res.send({token: accessToken});
+
+    catch (e) {
+    console.log(e);
+  }
+});
+
+
+app.get("/login", (req, res) => {
+  if (req.session.user) {
+    console.log("succesful");
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    console.log("not success");
+    console.log('req.session.user',req.session.user);
+    res.send({ loggedIn: false });
+  }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.user = null;
+  req.session.isAuthenticated = false;
+
+  return res.send(200);
+
+});
+
+
+const getUsers = async (req, res) => {
+  try {
+    db.connectToDatabase();
+    var userArray = [];
+    userArray = await db.getDb().collection("users").find().toArray();
+
+    const users = userArray;
+    res.send(users);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+app.post("/posts", upload.single("file"), async function (req, res) {
+  try {
+    const authorId = new ObjectId(req.body.author);
+    const uploadedImage = req.file;
+    const author = await db
+      .getDb()
+      .collection("authors")
+      .findOne({ _id: authorId });
     const newPost = {
       destination: req.body.destination,
       groupSize: req.body.groupSize,
