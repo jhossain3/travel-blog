@@ -2,9 +2,13 @@ import * as React from "react";
 import { useState } from "react";
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSignIn } from 'react-auth-kit';
+import { useCookies } from 'react-cookie';
 
 export default function Login() {
+const signIn = useSignIn();
 
+const [cookies, setCookie] = useCookies();
 const [form, setForm] = useState({
   username: "",
   password: "",
@@ -30,15 +34,36 @@ const handleSubmit = async (e) => {
       password: form.password,
     }),
   })
-    .then((response) => {
-      console.log("response", response);
-      window.location.href = 'http://localhost:3000/discover'
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok.");
-      }
+    .then(response => response.json() 
+    ) 
+    .then(data => {
+      const userToken = data.token;
+      signIn({
+        token: userToken,
+        expiresIn: 3600000,
+        tokenType: "Bearer",
+        authState: { name: form.username }
+      })
+      // setCookie('mySessionCookie', userToken , { path: '/', expiresIn: 3600000 });
+      console.log('token', userToken);
+      // window.location.href = 'http://localhost:3000/about'
     })
-    .catch(console.error);
+    .catch(error => {
+      console.log(error);
+    })
+      // signIn({
+      //   token: response.data.token,
+      //   expiresIn: 3600,
+      //   tokenType: "Bearer",
+      //   authState: { username: form.username }
+
+      // window.location.href = 'http://localhost:3000/discover'
+
+    //   if (!response.ok) {
+    //     throw new Error("Network response was not ok.");
+    //   }
+    // })
+
 };
 
   return (
