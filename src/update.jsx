@@ -93,6 +93,7 @@ const [authorObj, setAuthorObj] = useState([]);
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      
       body: JSON.stringify({
         destination: post.destination,
         summary: post.summary,
@@ -102,19 +103,12 @@ const [authorObj, setAuthorObj] = useState([]);
         checkIn: post.checkIn,
         checkOut: post.checkOut,
         // pictures: post.pictures,
-      }),
-    })
-    
-      // .then((response) => {
-      //   response.redirect("http://localhost:3000/discover");
-      //   window.location.reload();
-      //   console.log("response", response);
-      //   if (!response.ok) {
-      //     throw new Error("Network response was not ok.");
-      //   }
-      // })
-      .catch(console.error);
-  };
+      }
+
+      ),
+
+    }).then(window.location.redirect('http://localhost:3000/discover'));
+    }
 
   return (
     <Grid
