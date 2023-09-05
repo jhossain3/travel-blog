@@ -18,51 +18,44 @@ const backgroundImage1 =
 export default function Discover() {
   const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState("");
-  const[password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-     fetch("http://localhost:3003/login", {
+    fetch("http://localhost:3003/login", {
       method: "GET",
-      headers:{
-        withCredentials: true
+      headers: {
+        withCredentials: true,
       },
       username: username,
-      password: password
+      password: password,
     }).then((response) => {
-      console.log('resp login', response.json());
-    })
-  
+      console.log("resp login", response.json());
+    });
+
     const getPosts = async () => {
       let res = await fetch("http://localhost:3003/posts/");
       const postObj = await res.json();
       setPosts(postObj.map((e) => e));
+      console.log("postObj", postObj);
     };
 
     getPosts().catch(console.error);
   }, []);
 
   // useEffect(() => {
-   
+
   // }, [])
 
   const deletePost = async (id) => {
-    console.log('delete triggered')
-    await fetch(`http://localhost:3003/posts/${id}/delete`,{
+    console.log("delete triggered");
+    await fetch(`http://localhost:3003/posts/${id}/delete`, {
       method: "POST",
-      mode: 'no-cors',
+      mode: "no-cors",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-    })
-      .then((response) => {
-        response.redirect("http://localhost:3000/discover");
-        console.log("response", response);
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
-        }
-      })
-      .catch(console.error);
+    }).then(window.location.reload());
   };
 
   if (posts.length === 0) {
@@ -72,7 +65,6 @@ export default function Discover() {
       </Typography>
     );
   }
- 
 
   return (
     //   posts.map((item, i) => {
@@ -86,7 +78,6 @@ export default function Discover() {
           return (
             <Grid key={i} item>
               <CardActionArea component={Link} to={`/posts/${posts[i]._id}`}>
-                
                 <Card
                   sx={{
                     minHeight: "280px",
@@ -113,18 +104,17 @@ export default function Discover() {
                     <IconButton
                       component={Link}
                       to={`/posts/${posts[i]._id}/edit`}
-                      sx={{ color: "white" , padding:0, mb: 1,ml:1}}
+                      sx={{ color: "white", padding: 0, mb: 1, ml: 1 }}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                     onClick={event => {
-                      event.stopPropagation();
-                      event.preventDefault();
-                      deletePost(posts[i]._id)
-                      
-                    }}
-                      sx={{ color: "white" , padding:0, mb: 1, ml:1}}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        deletePost(posts[i]._id);
+                      }}
+                      sx={{ color: "white", padding: 0, mb: 1, ml: 1 }}
                     >
                       <DeleteIcon />
                     </IconButton>

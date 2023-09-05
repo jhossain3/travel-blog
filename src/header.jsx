@@ -70,7 +70,7 @@ export default function Header () {
               textDecoration: 'none',
             }}
           >
-            TRAVEL BLOG
+            TRAVEL BLOG!!
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
