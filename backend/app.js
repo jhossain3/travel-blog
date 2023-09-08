@@ -13,7 +13,11 @@ const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
 require('dotenv').config();
 
+let port = 3003;
 
+if (process.env.PORT) {
+  port = process.env.PORT;
+}
 
 app.use(express.json());
 
@@ -302,4 +306,4 @@ app.post("/posts/:id/edit", function (req, res) {
     .updateOne({ _id: postId }, { $set: updatedPost });
 });
 
-app.listen(3003);
+app.listen(port);
