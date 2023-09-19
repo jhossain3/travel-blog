@@ -40,7 +40,7 @@ export default function Create() {
 
   useEffect(() => {
     const getAuthors = async () => {
-      let res = await fetch("http://localhost:3003/getAuthors");
+      let res = await fetch("http://localhost:3001/api/getAuthors");
       const authorObj = await res.json();
       setAuthorObj(authorObj.map((e) => e));
     };
@@ -94,7 +94,7 @@ export default function Create() {
     formData.append("author", field.author);
     formData.append("file", file);
     console.log("file", file);
-    await fetch("http://localhost:3003/posts", {
+    await fetch("http://localhost:3001/api/posts", {
       method: "POST",
       body: formData,
 
@@ -279,7 +279,7 @@ export default function Create() {
               onClick={handleSubmit}
               variant="contained"
               component={Link}
-              to="/discover"
+              to="http://localhost:3000/Discover"
             >
               Submit
             </Button>

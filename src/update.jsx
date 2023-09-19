@@ -36,7 +36,7 @@ export default function Update() {
   //get req
   useEffect(() => {
     const getPostById = async () => {
-      let res = await fetch(`http://localhost:3003/posts/${id}`);
+      let res = await fetch(`http://localhost:3001/api/posts/${id}`);
       const postObj = await res.json();
       setPost({...post, ...postObj});
     
@@ -49,7 +49,7 @@ const [authorObj, setAuthorObj] = useState([]);
 // const [url, setUrl] = useState([]);
   useEffect(() => {
     const getAuthors = async () => {
-      let res = await fetch("http://localhost:3003/getAuthors");
+      let res = await fetch("http://localhost:3001/api/getAuthors");
       const authorObj = await res.json();
       setAuthorObj(authorObj.map((e) => e));
     };
@@ -87,7 +87,7 @@ const [authorObj, setAuthorObj] = useState([]);
 //post req
   const handleSubmit = async (event) => {
     console.log(post.destination);
-    await fetch(`http://localhost:3003/posts/${id}/edit`, {
+    await fetch(`http://localhost:3001/api/posts/${id}/edit`, {
       method: "POST",
       headers: {
         Accept: "application/json",

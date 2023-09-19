@@ -19,7 +19,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('submit');
-    await fetch("http://localhost:3003/users", {
+    await fetch("http://localhost:3001/api/users", {
       method: "POST",
       headers: {
         Accept: "application/json",

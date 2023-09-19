@@ -19,7 +19,7 @@ export default function TravelPost({ match }) {
 
   useEffect(() => {
     const getPostById = async () => {
-      let res = await fetch(`http://localhost:3003/posts/${id}`);
+      let res = await fetch(`http://localhost:3001/api/posts/${id}`);
       const postObj = await res.json();
       setPost({...post, ...postObj});
     
@@ -35,7 +35,7 @@ export default function TravelPost({ match }) {
           sx={{
             height: "500px",
             width: "100%",
-            backgroundImage: `url(http://localhost:3003/${post.picture})`,
+            backgroundImage: `url(http://localhost:3001/api/${post.picture})`,
             objectFit: "cover",
             objectPosition: "50% 50%",
           }}

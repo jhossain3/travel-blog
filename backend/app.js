@@ -13,11 +13,21 @@ const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
 require('dotenv').config();
 
-let port = 3003;
+// const path = require('path')
 
-if (process.env.PORT) {
-  port = process.env.PORT;
-}
+// // Serve static files from the React frontend app
+// app.use(express.static(path.join(__dirname, '../src')))
+
+// // AFTER defining routes: Anything that doesn't match what's above, send back index.html; (the beginning slash ('/') in the string is important!)
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname + '../src/index.html'))
+// })
+
+// let port = 3003;
+
+// if (process.env.PORT) {
+//   port = process.env.PORT;
+// }
 
 app.use(express.json());
 
@@ -66,7 +76,7 @@ const bp = require("body-parser");
 app.use(bp.json());
 
 app.use(bp.urlencoded({ extended: true }));
-app.use("/images", express.static("images"));
+app.use("/api/images", express.static("images"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -98,8 +108,10 @@ const getPostById = async (req, res) => {
     postArray = await db.getDb().collection("posts").find().toArray();
 
     const url = req.params.id;
+    console.log('url', url);
 
     const post = postArray.filter((p) => p._id.toString() === url);
+    console.log('post', post);
 
     if (post[0]) {
       res.send(post[0]);
@@ -111,7 +123,7 @@ const getPostById = async (req, res) => {
   }
 };
 
-app.get("/getAuthors", async function (req, res) {
+app.get("/api/getAuthors", async function (req, res) {
   try {
     db.connectToDatabase();
     var authorArray = [];
@@ -122,7 +134,7 @@ app.get("/getAuthors", async function (req, res) {
   }
 });
 
-app.post("/users", async function (req, res) {
+app.post("/api/users", async function (req, res) {
   try {
     const newUser = {
       user: req.body.username,
@@ -150,7 +162,7 @@ app.post("/users", async function (req, res) {
 //   })
 // }
 
-app.post("/login", async function (req, res) {
+app.post("/api/login", async function (req, res) {
   try {
     const userData = req.body;
     const enteredUsername = userData.username;
@@ -195,7 +207,7 @@ app.post("/login", async function (req, res) {
 });
 
 
-app.get("/login", (req, res) => {
+app.get("/api/login", (req, res) => {
   if (req.session.user) {
     console.log("succesful");
     res.send({ loggedIn: true, user: req.session.user });
@@ -206,7 +218,7 @@ app.get("/login", (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   req.session.user = null;
   req.session.isAuthenticated = false;
 
@@ -228,7 +240,7 @@ const getUsers = async (req, res) => {
   }
 };
 
-app.post("/posts", upload.single("file"), async function (req, res) {
+app.post("/api/posts", upload.single("file"), async function (req, res) {
   try {
     const authorId = new ObjectId(req.body.author);
     const uploadedImage = req.file;
@@ -266,7 +278,7 @@ const deletePost = async (req, res) => {
   console.log(result);
 };
 
-app.get("/hello", async function (req, res) {
+app.get("api/hello", async function (req, res) {
   try {
     res.send("donkey");
   } catch (e) {
@@ -274,21 +286,21 @@ app.get("/hello", async function (req, res) {
   }
 });
 
+// app.route("/discover");
 
+app.route("/api/users").get(getUsers);
 
-app.route("/users").get(getUsers);
+app.route("/api/posts").get(getPosts);
 
-app.route("/posts").get(getPosts);
+app.route("/api/posts/:id").get(getPostById);
 
-app.route("/posts/:id").get(getPostById);
+app.route("/api/posts/:id/delete").get(getPostById);
 
-app.route("/posts/:id/delete").get(getPostById);
+app.route("/api/posts/:id/edit").get(getPostById);
 
-app.route("/posts/:id/edit").get(getPostById);
+app.post("/api/posts/:id/delete", deletePost);
 
-app.post("/posts/:id/delete", deletePost);
-
-app.post("/posts/:id/edit", function (req, res) {
+app.post("/api/posts/:id/edit", function (req, res) {
   const postId = new ObjectId(req.params.id);
 
   const updatedPost = {
@@ -306,4 +318,4 @@ app.post("/posts/:id/edit", function (req, res) {
     .updateOne({ _id: postId }, { $set: updatedPost });
 });
 
-app.listen(port);
+app.listen(3001);

@@ -21,7 +21,7 @@ export default function Discover() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3003/login", {
+    fetch("http://localhost:3001/api/login", {
       method: "GET",
       headers: {
         withCredentials: true,
@@ -33,7 +33,7 @@ export default function Discover() {
     });
 
     const getPosts = async () => {
-      let res = await fetch("http://localhost:3003/posts/");
+      let res = await fetch("http://localhost:3001/api/posts/");
       const postObj = await res.json();
       setPosts(postObj.map((e) => e));
       console.log("postObj", postObj);
@@ -48,7 +48,7 @@ export default function Discover() {
 
   const deletePost = async (id) => {
     console.log("delete triggered");
-    await fetch(`http://localhost:3003/posts/${id}/delete`, {
+    await fetch(`http://localhost:3001/api/posts/${id}/delete`, {
       method: "POST",
       mode: "no-cors",
       headers: {
@@ -82,7 +82,7 @@ export default function Discover() {
                   sx={{
                     minHeight: "280px",
                     minWidth: 320,
-                    backgroundImage: `url(http://localhost:3003/${posts[i].picture})`,
+                    backgroundImage: `url(http://localhost:3001/api/${posts[i].picture})`,
                     backgroundSize: "cover",
                     display: "flex",
                     flexDirection: "column",

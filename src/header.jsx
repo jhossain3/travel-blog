@@ -39,7 +39,7 @@ export default function Header () {
   };
 
   const logout = () => {
-    fetch("http://localhost:3003/logout", {
+    fetch("http://localhost:3001/api/logout", {
       method: "GET",
       headers:{
         withCredentials: true

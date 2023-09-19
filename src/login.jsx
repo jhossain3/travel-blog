@@ -22,7 +22,7 @@ const handleChange = (e) => {
 const handleSubmit = async (e) => {
   e.preventDefault();
   console.log('submit');
-  await fetch("http://localhost:3003/login", {
+  await fetch("http://localhost:3001/api/login", {
     method: "POST",
     headers: {
       Accept: "application/json",
