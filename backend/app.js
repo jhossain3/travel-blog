@@ -13,7 +13,16 @@ const session = require("express-session");
 var MongoDBStore = require("connect-mongodb-session")(session);
 require('dotenv').config();
 
-// const path = require('path')
+const path = require('path')
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname,  "build", "app.html"));
+  });
+}
+
+
 
 // // Serve static files from the React frontend app
 // app.use(express.static(path.join(__dirname, '../src')))
