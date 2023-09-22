@@ -57,7 +57,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "json-server --watch db.json --port 3000 --no-cors",
-    "heroku-postbuild": "npm install --prefix src && npm run build --prefix src"
+    
   },
   "eslintConfig": {
     "extends": [
